@@ -17,9 +17,16 @@ models:
     staging:
       +schema: staging
       +materialized: view
+      +meta: {dagster: {group: staging}}
     intermediate:
       +schema: intermediate
       +materialized: view
+      +meta: {dagster: {group: intermediate}}
     marts:
       +schema: marts
       +materialized: table
+      +meta: {dagster: {group: marts}}
+
+seeds:
+  marketing_roi:
+    +meta: {dagster: {group: marts}}
