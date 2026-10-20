@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      LANDING_DIR: ${{ github.workspace }}/data/sample/landing
+      DUCKDB_PATH: ${{ github.workspace }}/data/ci.duckdb
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies (exact versions from uv.lock)
+        run: uv sync --locked
+
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Python unit tests
+        run: uv run pytest -v
+
+      - name: Build the warehouse from the committed sample
+        run: |
+          uv run python -m marketing_pipeline.extract.spend_simulator
+          uv run python -m marketing_pipeline.load.duckdb_loader
+
+      - name: dbt build (models + data tests)
+        working-directory: transform
+        run: uv run dbt build --profiles-dir .

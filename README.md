@@ -1,5 +1,7 @@
 # Marketing ROI Pipeline
 
+[![CI](https://github.com/Jdominguezzz/marketing-roi-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Jdominguezzz/marketing-roi-pipeline/actions/workflows/ci.yml)
+
 **Which marketing channels bring sellers who actually generate revenue, not just cheap leads?**
 
 An end-to-end ELT pipeline (Python · DuckDB · dbt · Dagster) on Olist's public marketplace data: leads → closed deals → seller revenue → CAC and LTV:CAC by channel.

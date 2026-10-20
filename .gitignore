@@ -9,9 +9,11 @@ wheels/
 # Virtual environments
 .venv
 
-# project
-data/
+# project (everything under data/ except the small CI sample)
+data/*
+!data/sample/
 *.duckdb
+data/sample/landing/spend/
 .env
 .DS_Store
 .ipynb_checkpoints/
