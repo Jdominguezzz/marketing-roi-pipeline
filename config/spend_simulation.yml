@@ -1,0 +1,23 @@
+# SIMULATED ad spend. Olist does not publish marketing spend.
+# Calibration: base_daily_spend_brl = observed leads/day (Jun-Dec 2017) x target_cpl_brl.
+# ramp_multiplier follows the observed Jan 2018 lead jump, set slightly higher
+# to model diminishing returns. Organic channels have no media spend.
+seed: 42
+start_date: "2017-06-01"
+end_date: "2018-05-31"
+ramp_date: "2018-01-01"
+noise_sd: 0.15
+weekday_factors: [1.10, 1.10, 1.05, 1.00, 0.95, 0.85, 0.80]  # Mon..Sun
+
+channels:
+  paid_search:       {target_cpl_brl: 60,  base_daily_spend_brl: 120, ramp_multiplier: 4.5}
+  social:            {target_cpl_brl: 45,  base_daily_spend_brl: 67,  ramp_multiplier: 5.0}
+  display:           {target_cpl_brl: 110, base_daily_spend_brl: 23,  ramp_multiplier: 3.0}
+  email:             {target_cpl_brl: 15,  base_daily_spend_brl: 11,  ramp_multiplier: 3.0}
+  other_publicities: {target_cpl_brl: 80,  base_daily_spend_brl: 10,  ramp_multiplier: 2.5}
+
+inject:
+  duplicate_day: "2017-11-24"      # Black Friday file delivered twice
+  late_file_day: "2018-02-10"      # file arrives 6 days late
+  late_days: 6
+  renamed_field_day: "2018-03-15"  # vendor renames 'spend' to 'cost'

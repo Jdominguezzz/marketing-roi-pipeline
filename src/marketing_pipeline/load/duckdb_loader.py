@@ -41,6 +41,44 @@ def load_table(con: duckdb.DuckDBPyConnection, table: str, pattern: str) -> int:
     return con.execute(f"SELECT COUNT(*) FROM raw.{table}").fetchone()[0]
 
 
+def load_spend(con: duckdb.DuckDBPyConnection, source_root: Path) -> int:
+    """Rebuild raw.ad_spend from ALL daily spend files (incremental source)."""
+    path_sql = str(source_root / "*" / "*.json").replace("'", "''")
+    con.execute("CREATE SCHEMA IF NOT EXISTS raw")
+    con.execute(f"""
+        CREATE OR REPLACE TABLE raw.ad_spend AS
+        SELECT
+            * EXCLUDE (filename),
+            filename          AS _source_file,
+            current_timestamp AS _loaded_at
+        FROM read_json('{path_sql}', format = 'array', union_by_name = true,
+                       hive_partitioning = true, filename = true)
+    """)
+    return con.execute("SELECT COUNT(*) FROM raw.ad_spend").fetchone()[0]
+
+
+def load_fx(con: duckdb.DuckDBPyConnection, source_root: Path) -> int:
+    """Rebuild raw.fx_rates: one row per date from the nested API responses."""
+    path_sql = str(source_root / "*" / "*.json").replace("'", "''")
+    con.execute("CREATE SCHEMA IF NOT EXISTS raw")
+    con.execute(f"""
+        CREATE OR REPLACE TABLE raw.fx_rates AS
+        SELECT
+            rate.key          AS rate_date,
+            rate.value.EUR    AS brl_eur,
+            base,
+            _source_file,
+            current_timestamp AS _loaded_at
+        FROM (
+            SELECT base, filename AS _source_file, unnest(map_entries(rates)) AS rate
+            FROM read_json('{path_sql}', filename = true, columns = {{
+                'base': 'VARCHAR', 'start_date': 'VARCHAR', 'end_date': 'VARCHAR',
+                'rates': 'MAP(VARCHAR, STRUCT(EUR DOUBLE))'}})
+        )
+    """)
+    return con.execute("SELECT COUNT(*) FROM raw.fx_rates").fetchone()[0]
+
+
 if __name__ == "__main__":
     from marketing_pipeline.utils.config import DB_PATH, LANDING
 
@@ -49,4 +87,10 @@ if __name__ == "__main__":
         path = latest_landed(LANDING / "kaggle", file_name)
         rows = load_table(con, table, str(path))
         print(f"raw.{table:<26} {rows:>8,} rows  <- {path.parent.name}")
+    print(
+        f"raw.{'ad_spend':<26} {load_spend(con, LANDING / 'spend'):>8,} rows  <- all daily files (SIMULATED)"
+    )
+    print(
+        f"raw.{'fx_rates':<26} {load_fx(con, LANDING / 'fx'):>8,} rows  <- Frankfurter API"
+    )
     con.close()
