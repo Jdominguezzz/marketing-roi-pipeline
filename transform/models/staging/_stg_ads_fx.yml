@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_ads__spend
+    description: >
+      SIMULATED. One row per channel per day. Deduplicated (latest delivery wins),
+      schema drift fixed (cost -> spend). See ADR-003.
+    columns:
+      - name: spend_key
+        description: Primary key = channel || '-' || spend_date. Catches the duplicated day.
+        data_tests:
+          - unique
+          - not_null
+      - name: spend_brl
+        description: Spend in BRL. NULL here would mean an unhandled renamed field.
+        data_tests:
+          - not_null
+      - name: channel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [paid_search, social, display, email, other_publicities]
+      - name: currency
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [BRL]
+
+  - name: stg_fx__rates
+    description: BRL to EUR, one row per ECB publication day.
+    columns:
+      - name: rate_date
+        data_tests:
+          - unique
+          - not_null
+      - name: brl_to_eur
+        data_tests:
+          - not_null

@@ -1,0 +1,25 @@
+name: marketing_roi
+version: "1.0.0"
+profile: marketing_roi
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  observation_end_date: "2018-08-31"
+  take_rate: 0.10
+
+models:
+  marketing_roi:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
