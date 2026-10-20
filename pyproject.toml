@@ -1,7 +1,7 @@
 [project]
 name = "marketing-roi-pipeline"
 version = "0.1.0"
-description = "Add your description here"
+description = "ELT pipeline measuring CAC and LTV:CAC by marketing channel on Olist public data"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -15,3 +15,13 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.17.1",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/marketing_pipeline"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
