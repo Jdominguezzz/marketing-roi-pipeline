@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: olist
+    schema: raw
+    description: Olist public datasets (Kaggle, CC BY-NC-SA 4.0), loaded as snapshots.
+    tables:
+      - name: marketing_qualified_leads
+      - name: closed_deals
+      - name: orders
+      - name: order_items
+      - name: order_payments
+      - name: customers
+      - name: sellers
+
+  - name: ads
+    schema: raw
+    description: SIMULATED daily paid-media spend (see ADR-003).
+    tables:
+      - name: ad_spend
+
+  - name: fx
+    schema: raw
+    description: BRL to EUR daily rates from the Frankfurter API (ECB data).
+    tables:
+      - name: fx_rates

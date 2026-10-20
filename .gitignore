@@ -15,3 +15,8 @@ data/
 .env
 .DS_Store
 .ipynb_checkpoints/
+
+# dbt
+transform/target/
+transform/dbt_packages/
+transform/logs/
