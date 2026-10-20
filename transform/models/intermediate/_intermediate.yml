@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: int_fx__daily
+    description: One row per calendar day, BRL->EUR rate in force (as-of join, weekends carried forward).
+    columns:
+      - name: calendar_date
+        data_tests: [unique, not_null]
+      - name: brl_to_eur
+        data_tests: [not_null]
+
+  - name: int_leads__with_deals
+    description: One row per lead with its deal, if won.
+    columns:
+      - name: lead_id
+        data_tests: [unique, not_null]
+
+  - name: int_seller__revenue
+    description: One row per delivered order item of a funnel-acquired seller, up to the observation end.
+    columns:
+      - name: order_item_key
+        data_tests: [unique, not_null]
+      - name: olist_revenue_eur
+        data_tests: [not_null]

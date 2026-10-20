@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: dim_channel
+    columns:
+      - name: channel
+        data_tests: [unique, not_null]
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+
+  - name: fct_leads
+    description: Grain = one row per lead (8,000).
+    columns:
+      - name: lead_id
+        data_tests: [unique, not_null]
+      - name: channel
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_channel')
+                field: channel
+
+  - name: fct_ad_spend_daily
+    description: Grain = one row per paid channel per day. SIMULATED (ADR-003).
+    columns:
+      - name: spend_key
+        data_tests: [unique, not_null]
+      - name: spend_eur
+        data_tests: [not_null]
+
+  - name: fct_seller_revenue
+    description: Grain = one delivered order item of a funnel-acquired seller.
+    columns:
+      - name: order_item_key
+        data_tests: [unique, not_null]
+
+  - name: mart_channel_roi
+    description: >
+      Grain = channel x lead month. CAC = spend / ALL won deals. 3-month LTV per deal =
+      Olist revenue (GMV x take_rate) in the 3 months after the deal was won, averaged over
+      deals that had 3 full months before the observation end (non-sellers count as 0).
+    columns:
+      - name: channel_month_key
+        data_tests: [unique, not_null]
+      - name: conversion_rate
+        description: deals / leads; NULL when there are no leads.
+
+  - name: mart_channel_summary
+    description: Grain = one row per channel, cohorts Jul 2017 - May 2018. Feeds the headline.
+    columns:
+      - name: channel
+        data_tests: [unique, not_null]
+      - name: cac_eur
+        description: NULL for organic channels (no media spend), never 0.
