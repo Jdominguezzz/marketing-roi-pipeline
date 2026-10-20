@@ -1,0 +1,13 @@
+version: 2
+
+seeds:
+  - name: channel_map
+    description: One row per acquisition channel. Business grouping decided by us, not by the source.
+    config:
+      column_types:
+        is_paid: boolean
+    columns:
+      - name: channel
+        data_tests:
+          - unique
+          - not_null

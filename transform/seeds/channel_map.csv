@@ -1,0 +1,11 @@
+channel,display_name,channel_group,is_paid
+paid_search,Paid search,paid,true
+social,Paid social,paid,true
+display,Display,paid,true
+email,Email,paid,true
+other_publicities,Other publicity,paid,true
+organic_search,Organic search,organic,false
+direct_traffic,Direct traffic,organic,false
+referral,Referral,organic,false
+other,Other,other,false
+unknown,Unknown,unknown,false
